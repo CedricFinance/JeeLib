@@ -5,6 +5,11 @@
 #define RF12_h
 
 #include <stdint.h>
+#if ARDUINO >= 100
+#include <Arduino.h> // Arduino 1.0
+#else
+#include <WProgram.h> // Arduino 0022
+#endif
 
 // version 1 did not include the group code in the crc
 // version 2 does include the group code in the crc
@@ -44,12 +49,16 @@
 extern volatile uint16_t rf12_crc;  // running crc value, should be zero at end
 extern volatile uint8_t rf12_buf[]; // recv/xmit buf including hdr & crc bytes
 extern long rf12_seq;               // seq number of encrypted packet (or -1)
+extern boolean ITPlusFrame;         // if the received frame is an IT+ one ?
 
 // only needed if you want to init the SPI bus before rf12_initialize does it
 void rf12_spiInit(void);
 
 // call this once with the node ID, frequency band, and optional group
 uint8_t rf12_initialize(uint8_t id, uint8_t band, uint8_t group=0xD4);
+
+// override rf12 settings in order to receive IT+ packets
+void rf12_initialize_overide_ITP();
 
 // initialize the RF12 module from settings stored in EEPROM by "RF12demo"
 // don't call rf12_initialize() if you init the hardware with rf12_config()
