@@ -21,7 +21,7 @@ enum {
     RESET        = 0x1e,
 };
 
-static uint8_t crcTab [] PROGMEM = {
+static const uint8_t crcTab [] PROGMEM = {
     0, 49, 98, 83, 196, 245, 166, 151, 185, 136, 219, 234, 125, 76, 31, 46, 67,
     114, 33, 16, 135, 182, 229, 212, 250, 203, 152, 169, 62, 15, 92, 109, 134,
     183, 228, 213, 66, 115, 32, 17, 63, 14, 93, 108, 251, 202, 153, 168, 197,
@@ -80,7 +80,7 @@ uint8_t SHT11::writeByte(uint8_t value) const {
     clock(1);
     uint8_t error = digiRead();
     clock(0);
-    
+
     crcFun(value);
     return error;
 }
@@ -98,7 +98,7 @@ uint8_t SHT11::readByte(uint8_t ack) const {
     clock(1);
     clock(0);
     release();
-    
+
     crcFun(value);
     return value;
 }
@@ -107,15 +107,15 @@ void SHT11::start() const {
     clock(0);
     mode(OUTPUT);
     digiWrite(1);
-    
-    clock(1); 
-    digiWrite(0); 
-    clock(0);   
-    clock(1); 
-    digiWrite(1);      
+
+    clock(1);
+    digiWrite(0);
+    clock(0);
+    clock(1);
+    digiWrite(1);
     clock(0);
     release();
-    
+
     crc8 = 0;
 }
 
@@ -191,12 +191,12 @@ void SHT11::calculate(float& rh_true, float& t_C) const {
     rh_true = (t_C-25)*(T1+T2*rh) + C3*rh*rh + C2*rh + C1;
     if (rh_true > 99) rh_true = 100;
     if (rh_true < 0.1) rh_true = 0.1;
-} 
+}
 
 float SHT11::dewpoint(float h, float t) {
-    float k = (log10(h)-2)/0.4343 + (17.62*t)/(243.12+t); 
-    return 243.12*k/(17.62-k);  
-} 
+    float k = (log10(h)-2)/0.4343 + (17.62*t)/(243.12+t);
+    return 243.12*k/(17.62-k);
+}
 #else
 //XXX TINY!
 #endif
